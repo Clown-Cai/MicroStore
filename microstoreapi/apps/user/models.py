@@ -17,6 +17,13 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+# 积分表
+class UserIntegral(models.Model):
+    user = models.OneToOneField(to=User, db_constraint=False, on_delete=models.CASCADE)
+    integral_num = models.IntegerField(default=0)       # 总积分
+    current_integral = models.IntegerField(default=0)   # 现有积分数
+    cost_num = models.IntegerField(default=0)            # 已花费积分
+
 
 # 积分管理表
 class Integral(models.Model):

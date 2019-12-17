@@ -31,6 +31,13 @@ class Supplier2Product(models.Model):
     def __str__(self):
         return '%s' %self.id
 
+# 库存表
+class Inventory(models.Model):
+    product = models.OneToOneField(to=Product, db_constraint=False, on_delete=models.CASCADE)
+    inventory_num = models.IntegerField(default=0)       # 总库存数
+    current_invintory = models.IntegerField(default=0)   # 现有库存数
+    sale_num = models.IntegerField(default=0)            # 已售数量
+
 
 # 库存变更表
 class InventoryChange(models.Model):
