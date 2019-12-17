@@ -1,0 +1,21 @@
+# 过滤条件一定要在第一次提交版本库之前完成
+# 各类编辑器产生的配置文件
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 日志文件
+*.log
+*.logger
+
+# 本地测试文件
+scripts
+z_celery
+
+# 导包缓存文件
+*.pyc
+__pycache__
