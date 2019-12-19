@@ -22,14 +22,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',  # 解决跨域问题
+    'corsheaders',
     'rest_framework',  # 使用drf
 
     'adminer',
     'order',
     'product',
     'user',
-
 ]
 
 MIDDLEWARE = [
@@ -40,8 +39,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'  # 解决跨域问题
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'microstoreapi.urls'
 
@@ -102,8 +103,6 @@ USE_L10N = True
 # 使用自定义的User
 AUTH_USER_MODEL = 'user.User'
 
-# 允许跨域源
-CORS_ORIGIN_ALLOW_ALL = True
 
 # media文件的配置
 MEDIA_URL = '/media/'

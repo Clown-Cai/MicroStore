@@ -8,7 +8,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='media/img_avatar/', default='media/img_avatar/default.jpg')
     create_time = models.DateTimeField(auto_now_add=True)
     integral_num = models.IntegerField(default=0)  # 积分数
-    is_delete = models.BooleanField(default=0)
+    is_delete = models.BooleanField(default=False)
     addr_num = models.IntegerField(default=0)   # 收货地址个数
 
     class Meta:
@@ -45,7 +45,7 @@ class Address(models.Model):
     addr = models.CharField(max_length=256)      # 收货地址
     consignee = models.CharField(max_length=64)  # 收件人
     phone = models.CharField(max_length=11)      # 收件人手机号码
-    is_default = models.BooleanField(default=0)
+    is_default = models.BooleanField(default=False)
     create_time = models.DateTimeField(auto_now=True)
 
     class Meta:

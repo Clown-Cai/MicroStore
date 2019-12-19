@@ -9,7 +9,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=7, decimal_places=2)
     market_price = models.DecimalField(max_digits=7, decimal_places=2)  # 市场价
     img = models.ImageField(upload_to='media/img_prod/')
-    is_unshelve = models.BooleanField(default=0)   # 是否下架
+    is_unshelve = models.BooleanField(default=False)   # 是否下架
     repertory = models.IntegerField()    # 库存数
     sale_num = models.IntegerField()    # 销量
     create_time = models.DateTimeField(auto_now_add=True)
@@ -20,6 +20,10 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def category_name(self):
+        return self.category.name
 
 
 # 商品类型

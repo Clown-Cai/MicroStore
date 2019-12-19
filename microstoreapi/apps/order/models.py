@@ -56,7 +56,7 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(to=User, db_constraint=False, on_delete=models.CASCADE)
     product = models.ForeignKey(to=Product, db_constraint=False, on_delete=models.CASCADE)
     count = models.IntegerField()
-    create_time = models.DateTimeField()
+    create_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'ShoppingCart'
@@ -69,7 +69,7 @@ class ShoppingCart(models.Model):
 class ProductCollection(models.Model):
     product = models.ForeignKey(to=Product, db_constraint=False, on_delete=models.CASCADE)
     user = models.ForeignKey(to=User, db_constraint=False, on_delete=models.CASCADE)
-    is_delete = models.BooleanField(default=0)
+    is_delete = models.BooleanField(default=False)
     collect_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
