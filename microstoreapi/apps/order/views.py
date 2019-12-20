@@ -1,10 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import F
+from django.db.transaction import atomic
 
-from .models import ProductCollection, ShoppingCart
+from .models import ProductCollection, ShoppingCart, OrderInfo, Order
 from product.models import Product
 from user.models import User
+from .serializers import OrderModelSerializer
+from libs.Alipay import alipay
 
 # Create your views here.
 class ProductCollectionAPIView(APIView):
@@ -44,3 +47,42 @@ class ShoppingAPIView(APIView):
             if not row:
                 return Response(data={'code': 0, 'msg': '添加购物车失败'})
         return Response(data={'code': 1, 'msg': '添加购物车成功'})
+
+
+# 订单
+class OrderAPIView(APIView):
+
+    def post(self, request):
+        # 获取订单中商品信息
+        prod_id = request.data.get('prod_id')
+        count = request.data.get('count')
+        serializer = OrderModelSerializer(data=request.data, context={'request': request})
+        # 信息校验
+        serializer.is_valid(raise_exception=True)
+        with atomic():
+            # 订单入库
+            order = serializer.save()
+            # 订单详情入库
+            obj = Product.objects.filter(pk=prod_id).first()
+            OrderInfo.objects.create(
+                product=obj,
+                unit_price=obj.price,
+                count=count,
+                order=order
+            )
+        # 返回一个支付链接
+        return Response(serializer.paymentLink)
+
+# 支付成功后，支付宝返回给后台
+class SuccessAPIView(APIView):
+    def post(self, request):
+        data = request.data
+        signature = data.pop('sign')
+        success = alipay.verify(data, signature)
+        if success and data["trade_status"] in ("TRADE_SUCCESS", "TRADE_FINISHED"):
+            order = Order.objects.filter(order_num=data.get('out_trade_no'))
+            if order.first().pay_status != 1:
+                order.update(pay_status=1)
+                return Response('success')
+            print("trade succeed")
+        return Response('failed')

@@ -17,22 +17,22 @@ alipay = AliPay(
 
 # 生成支付链接
 # 电脑网站支付，需要跳转到https://openapi.alipay.com/gateway.do? + order_string
-def get_paymentlink(subject, total_amount):
-    out_trade_no = _get_out_trade_no()
+def get_paymentlink(subject, order_num, total_amount):
     order_string = alipay.api_alipay_trade_page_pay(
-        out_trade_no=out_trade_no,
+        out_trade_no=order_num,
         total_amount=total_amount,
         subject=subject,
         # 支付成功后，前台异步回调接口
         return_url=RETURN_URL,
         # 支付成功后，后台异步回调接口, 可选, 不填则使用默认notify url
-        notify_url="https://example.com/notify"
+        notify_url=NOTIFY_URL
     )
     PAYMENT_LINK = GATEWAY + order_string
+    print(PAYMENT_LINK)
     return PAYMENT_LINK
 
 
 # 生成订单号
-def _get_out_trade_no():
+def get_out_trade_no():
     trade_no = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     return trade_no
