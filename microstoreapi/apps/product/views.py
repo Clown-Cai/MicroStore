@@ -50,6 +50,3 @@ class ProductByCategoryListAPIView(APIView):
         return Response(prod_serializer.data)
 
 
-# 收藏夹
-class ProductCollectCreateAPIView(CreateAPIView):
-    pass
