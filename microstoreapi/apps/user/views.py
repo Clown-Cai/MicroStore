@@ -5,7 +5,8 @@ from django.db.models import F
 from django.db.transaction import atomic
 
 from .models import Address, User
-from .serializers import AddressModelSerializer, AddressSer
+from .serializers import AddressModelSerializer, AddressSer, MobileLoginModelSerializer, LoginModelSerializer, RegisterModelSerializer
+from libs.tx_sms import send_sms
 
 
 # 收货地址增删改查
@@ -77,5 +78,60 @@ class AddrDefaultAPIView(APIView):
             Address.objects.filter(pk=addr_id).update(is_default=True)
             return Response(data={'code': 1, 'msg': '设置成功'})
 
+
+# 检查手机号是否存在
+class CheckMobileAPIView(APIView):
+    def post(self, request):
+        mobile = request.data.get('mobile')
+        user_obj = User.objects.filter(phone=mobile).first()
+        if user_obj:
+            return Response(data={'code':1, 'msg':'用户存在'})
+        else:
+            return Response(data={'code':0, 'msg':'用户不存在'})
+
+# 发送验证码
+class SendSMSAPIView(APIView):
+    def post(self, request):
+        mobile = request.data.get('mobile')
+        flag = send_sms(mobile)
+        if flag:
+            return Response(data={'code':1, 'msg':'发送成功'})
+        return Response(data={'code':1, '.msg':'发送失败'})
+
+
+# 手机号码登录
+class MobileLoginAPIView(APIView):
+    def post(self, request):
+        data = request.data
+        serializer = MobileLoginModelSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        # token = serializer.token
+        return Response(data={
+            'username':serializer.user.username,
+            'token':serializer.token
+        })
+
+
+# 用户名、手机号码登录
+class LoginAPIView(APIView):
+    def post(self, request):
+        data = request.data
+        serializer = LoginModelSerializer(data=data)
+        if serializer.is_valid():
+            return Response(data={
+                'username': serializer.user.username,
+                'token': serializer.token
+            })
+        return Response(data=serializer.errors)
+
+
+# 用户注册
+class RegisterAPIView(APIView):
+    def post(self, request):
+        data = request.data
+        serializer = RegisterModelSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.create(serializer.validated_data)
+        return Response(data={'code':1,'msg':'注册成功'})
 
 

@@ -1,5 +1,6 @@
 from qcloudsms_py import SmsSingleSender
 import random
+from django.core.cache import cache
 
 from .settings import *
 
@@ -8,6 +9,8 @@ ssender = SmsSingleSender(APP_ID, APP_KEY)
 
 def send_sms(phone):
     code = _get_code()
+    # 在缓存中记录code
+    cache.set(phone, code)
     params = [code, EXP]
     try:
         result = ssender.send_with_param(

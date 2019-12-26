@@ -21,6 +21,11 @@ class Order(models.Model):
     def __str__(self):
         return self.order_num
 
+    # Oder对应的orderInfo
+    @property
+    def orderInfo(self):
+        return self.orderinfo_set.id
+
 
 # 订单详情表
 class OrderInfo(models.Model):
