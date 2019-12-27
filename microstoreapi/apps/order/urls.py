@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^unpayorder/', NoPayOrderAPIView.as_view()),
     url(r'^undeliver/', UndeliverOrderAPIView.as_view()),
     url(r'^unreceive/', UnreceivedAPIView.as_view()),
+    url(r'^comment/', CommentAPIView.as_view()),
 
 ]

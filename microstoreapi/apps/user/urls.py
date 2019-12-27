@@ -11,4 +11,7 @@ urlpatterns = [
     url(r'login/mobile/$', MobileLoginAPIView.as_view()),
     url(r'login/$', LoginAPIView.as_view()),
     url(r'register/$', RegisterAPIView.as_view()),
+    url(r'userinfo/$', UserInfoChangeAPIView.as_view()),
+    url(r'password/$', PasswordChangeAPIView.as_view()),
+    url(r'avatar/$', AvatarAPIView.as_view()),
 ]

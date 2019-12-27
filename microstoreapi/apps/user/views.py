@@ -5,7 +5,8 @@ from django.db.models import F
 from django.db.transaction import atomic
 
 from .models import Address, User
-from .serializers import AddressModelSerializer, AddressSer, MobileLoginModelSerializer, LoginModelSerializer, RegisterModelSerializer
+from .serializers import AddressModelSerializer, AddressSer, MobileLoginModelSerializer, \
+    LoginModelSerializer, RegisterModelSerializer, UserInfoSerializer, PasswordSerializer, AvatarSerializer
 from libs.tx_sms import send_sms
 
 
@@ -135,3 +136,39 @@ class RegisterAPIView(APIView):
         return Response(data={'code':1,'msg':'注册成功'})
 
 
+# 用户更新
+class UserInfoChangeAPIView(APIView):
+    def get(self, request):
+        # user = request.user
+        user = User.objects.filter(pk=1).first()
+        serializer = UserInfoSerializer(user, context={'request':request})
+        return Response(serializer.data)
+
+    def patch(self, request):
+        # user = request.user
+        user = User.objects.filter(pk=1).first()
+        serializer = UserInfoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.update(instance=user,validated_data=request.data)
+        return Response(data={'code':1,'msg':'修改成功'})
+
+
+class PasswordChangeAPIView(APIView):
+    def patch(self, request):
+        # user = request.user
+        # user = User.objects.filter(pk=1).first()
+        serializer = PasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(data={'code': 1, 'msg': '修改成功'})
+
+
+# 头像修改
+class AvatarAPIView(APIView):
+    def post(self, request):
+        # user = request.user
+        user = User.objects.filter(pk=1).first()
+        avatar = request.data
+        serialzer = AvatarSerializer(data=avatar)
+        serialzer.is_valid(raise_exception=True)
+        serialzer.update(instance=user,validated_data=avatar)
+        return Response(data={'code':1, 'msg':'修改成功'})

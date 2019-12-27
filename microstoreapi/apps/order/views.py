@@ -106,6 +106,14 @@ class OrderAPIView(APIView):
         return Response(serializer.paymentLink)
 
 
+    def patch(self, request):
+        order_id = request.data.get('pk')
+        if not order_id:
+            return Response(data={'code':0,'msg':'数据没能正常传输'})
+        Order.objects.filter(pk=order_id).update(order_status=1)
+        return Response(data={'code':1,'msg':'收货成功'})
+
+
 # 支付成功后，支付宝返回给后台
 class SuccessAPIView(APIView):
     def post(self, request):
@@ -156,7 +164,7 @@ class UndeliverOrderAPIView(APIView):
     def get(self, request):
         # user = request.user
         user = User.objects.filter(pk=1).first()
-        order_list = OrderInfo.objects.filter(order__user=user, order__pay_status=1, order__order_status=2).all()
+        order_list = OrderInfo.objects.filter(order__user=user, order__pay_status=1, order__order_status=2,status=0).all()
         serializer = OrderInfoSerializer(order_list, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -167,6 +175,17 @@ class UnreceivedAPIView(APIView):
         # user = request.user
         user = User.objects.filter(pk=1).first()
         order_list = OrderInfo.objects.filter(order__user=user, order__pay_status=1, order__order_status=2,
+                                              status=1).all()
+        serializer = OrderInfoSerializer(order_list, many=True, context={'request':request})
+        return Response(data=serializer.data)
+
+
+# 待评论
+class CommentAPIView(APIView):
+    def get(self, request):
+        # user = request.user
+        user = User.objects.filter(pk=1).first()
+        order_list = OrderInfo.objects.filter(order__user=user, order__pay_status=1, order__order_status=1,
                                               status=1).all()
         serializer = OrderInfoSerializer(order_list, many=True, context={'request':request})
         return Response(data=serializer.data)

@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 # 用户表
 class User(AbstractUser):
     phone = models.CharField(max_length=11)
-    avatar = models.ImageField(upload_to='media/img_avatar/', default='media/img_avatar/default.jpg')
+    avatar = models.ImageField(upload_to='img_avatar/', default='media/img_avatar/default.jpg')
     create_time = models.DateTimeField(auto_now_add=True)
     integral_num = models.IntegerField(default=0)  # 积分数
     is_delete = models.BooleanField(default=False)

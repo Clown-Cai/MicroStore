@@ -117,3 +117,50 @@ class RegisterModelSerializer(ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+
+class UserInfoSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'avatar', 'email', 'phone']
+        extra_kwargs = {
+            'id':{
+                'read_only':True
+            },
+            'avatar':{
+                'read_only': True
+            }
+        }
+
+
+class PasswordSerializer(ModelSerializer):
+    old_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+    class Meta:
+        model = User
+        fields = ['old_password', 'password', 'confirm_password']
+
+    def validate(self, attrs):
+        # user = self.context.get('request').user
+        user = User.objects.filter(pk=1).first()
+        old_password = attrs.get('old_password')
+        confirm_password = attrs.get('confirm_password')
+        password = attrs.get('password')
+        if not user.check_password(old_password):
+            raise serializers.ValidationError('旧密码不正确！')
+        if password != confirm_password:
+            raise serializers.ValidationError('两次密码不一致')
+        user.set_password(raw_password=password)
+        # user.set_password(password=password)
+        user.save()
+        return attrs
+
+
+# 头像
+class AvatarSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['avatar']
+
+
+
